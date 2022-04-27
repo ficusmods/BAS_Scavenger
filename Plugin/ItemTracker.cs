@@ -16,7 +16,9 @@ namespace Scavenger
         private LinkedList<ItemSpot> spotSpawnOrder = new LinkedList<ItemSpot>();
         private HashSet<ItemSpot> grabbableItemSpots = new HashSet<ItemSpot>();
 
-        HashSet<ItemData.Type> NonTrackedItemTypes = new HashSet<ItemData.Type> { ItemData.Type.Prop, ItemData.Type.Body };
+        HashSet<ItemData.Type> NonTrackedItemTypes = new HashSet<ItemData.Type> { ItemData.Type.Prop, ItemData.Type.Body, ItemData.Type.Wardrobe, ItemData.Type.Spell, ItemData.Type.Misc };
+
+        bool trackingEnabled = false;
 
         // Key: InstanceId , Value: ItemSpot component's gameobject
         public HashSet<ItemSpot> ItemSpots
@@ -27,6 +29,17 @@ namespace Scavenger
         public HashSet<ItemSpot> GrabbableItemSpots
         {
             get => grabbableItemSpots;
+        }
+
+        private void Awake()
+        {
+            EventManager.onLevelUnload += EventManager_onLevelUnload;
+            trackingEnabled = true;
+        }
+
+        private void EventManager_onLevelUnload(LevelData levelData, EventTime eventTime)
+        {
+            if (eventTime == EventTime.OnStart) trackingEnabled = false;
         }
 
         private void RemoveOldestItemSpot()
@@ -49,6 +62,9 @@ namespace Scavenger
 
         private void Update()
         {
+            if (GameManager.isQuitting) trackingEnabled = false;
+            if (!trackingEnabled) return;
+
             foreach (Item item in Item.allActive)
             {
                 if (!NonTrackedItemTypes.Contains(item.data.type))
@@ -66,7 +82,7 @@ namespace Scavenger
 
         private void TrackingModule_onItemDeactivated(Item item)
         {
-            if (GameManager.isQuitting) return;
+            if (!trackingEnabled) return;
 
             if (this.itemSpots.Count >= Config.TrackedItemCount)
             {

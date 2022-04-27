@@ -50,7 +50,7 @@ namespace Scavenger
                     activeItemSpot.SpawnItem(item =>
                     {
                         Physics.IgnoreCollision(playerHand.ragdollHand.touchCollider, item.GetMainHandle(side).touchCollider, true);
-                        item.transform.position = playerHand.ragdollHand.transform.position;
+                        item.transform.MoveAlign(item.GetDefaultHolderPoint().anchor, playerHand.ragdollHand.transform);
                         playerHand.ragdollHand.Grab(item.GetMainHandle(side));
                     });
                     playerHand.ragdollHand.caster.telekinesis.TryRelease();

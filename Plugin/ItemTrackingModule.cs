@@ -21,17 +21,24 @@ namespace Scavenger
         private void Awake()
         {
             item = GetComponent<Item>();
+            item.OnDespawnEvent += Item_OnDespawnEvent;
         }
 
-        private void OnDisable()
+        private void Item_OnDespawnEvent(EventTime eventTime)
         {
-            if (onItemDeactivated != null) onItemDeactivated(item);
+            if (eventTime == EventTime.OnStart)
+            {
+                if (item.isGripped) return;
+                if (item.holder && !(item.holder.creature && !item.holder.creature.isKilled)) return;
+                
+
+                if (onItemDeactivated != null) onItemDeactivated(item);
+            }
         }
 
         private void OnEnable()
         {
             if (onItemActivated != null) onItemActivated(item);
-
         }
     }
 }
