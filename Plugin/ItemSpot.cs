@@ -97,6 +97,7 @@ namespace Scavenger
         private void Update()
         {
             if (!spawned) return;
+            if (!Player.local || !Player.local.creature) return;
 
             PlayerHand leftHand = Player.local.handLeft;
             PlayerHand rightHand = Player.local.handRight;

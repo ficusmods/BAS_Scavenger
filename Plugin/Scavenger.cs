@@ -62,6 +62,7 @@ namespace Scavenger
 
         private void LateUpdate()
         {
+            if (!Player.local || !Player.local.creature) return;
             UpdateHand(Side.Left);
             UpdateHand(Side.Right);
         }

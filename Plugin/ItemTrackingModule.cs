@@ -28,9 +28,8 @@ namespace Scavenger
         {
             if (eventTime == EventTime.OnStart)
             {
-                if (item.isGripped) return;
-                if (item.holder && !(item.holder.creature && !item.holder.creature.isKilled)) return;
-                
+                if (item.mainHandler && (!item.mainHandler.creature || !item.mainHandler.creature.isKilled)) return;
+                if (item.holder && (!item.holder.creature || !item.holder.creature.isKilled)) return;
 
                 if (onItemDeactivated != null) onItemDeactivated(item);
             }
