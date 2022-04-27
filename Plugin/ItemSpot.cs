@@ -17,6 +17,7 @@ namespace Scavenger
         public string spotName = "ItemSpot_Unknown";
         public bool spawned = false;
 
+        private Canvas labelCanvas;
         private Text labelText;
         private ParticleSystem shineParticleSystem;
         private ParticleSystemRenderer shineParticleRenderer;
@@ -59,18 +60,25 @@ namespace Scavenger
 
         public void Spawn()
         {
-            Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemLabel",
+            Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemSpot",
                 (GameObject obj) =>
                 {
                     spotObject = obj;
                     spotObject.transform.SetParent(this.gameObject.transform, false);
+
+                    labelCanvas = spotObject.GetComponentInChildren<Canvas>();
+                    labelCanvas.transform.localPosition = new Vector3(0.0f, Config.ItemSpotLabelHeight, 0.0f);
+
                     labelText = spotObject.GetComponentInChildren<Text>();
                     labelText.text = itemData.displayName;
                     labelText.transform.localScale = new Vector3(Config.ItemSpotLabelScale, Config.ItemSpotLabelScale, Config.ItemSpotLabelScale);
-                    labelText.transform.localPosition = new Vector3(0.0f, Config.ItemSpotLabelHeight, 0.0f);
                     labelText.gameObject.SetActive(false);
                     
                     shineParticleSystem = spotObject.GetComponentInChildren<ParticleSystem>();
+                    var mainParticleModule = shineParticleSystem.main;
+                    mainParticleModule.startSizeX = mainParticleModule.startSizeX.constant * Config.ItemSpotShineScale;
+                    mainParticleModule.startSizeY = mainParticleModule.startSizeY.constant * Config.ItemSpotShineScale;
+                    mainParticleModule.startSizeZ = mainParticleModule.startSizeZ.constant * Config.ItemSpotShineScale;
                     shineParticleRenderer = shineParticleSystem.GetComponent<ParticleSystemRenderer>();
                     shineParticleSystem.gameObject.SetActive(false);
                     spawned = true;

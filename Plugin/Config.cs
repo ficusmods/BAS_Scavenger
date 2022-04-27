@@ -13,7 +13,8 @@ namespace Scavenger
         public static float ItemSpotLabelVisibleDistance = 0.6f;
         public static float ItemSpotShineVisibleDistance = 5.0f;
         public static float ItemSpotGrabDistance = 0.5f;
-        public static float ItemSpotLabelScale = 0.0005f;
+        public static float ItemSpotShineScale = 1.0f;
+        public static float ItemSpotLabelScale = 1.0f;
         public static float ItemSpotLabelHeight = 0.3f;
         public static float ItemDropRaycastSphereSize = 0.2f;
         public static float ItemDropRaycastLength = 3.0f;

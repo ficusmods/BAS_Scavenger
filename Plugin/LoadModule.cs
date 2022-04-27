@@ -42,6 +42,11 @@ namespace Scavenger
             get => Config.ItemSpotGrabDistance;
             set => Config.ItemSpotGrabDistance = value;
         }
+        public float ItemSpotShineScale
+        {
+            get => Config.ItemSpotShineScale;
+            set => Config.ItemSpotShineScale = value;
+        }
         public float ItemSpotLabelScale
         {
             get => Config.ItemSpotLabelScale;
