@@ -23,7 +23,7 @@
           "ItemDropRaycastLength": 3.0,
           "ItemSpotSpawnHeight": 0.1,
           "ItemSpotNoParticles": false,
-          "ShineColorOOR": [0.95, 0.35, 0.1],
+          "ShineColorOOR": [1.0, 1.0, 1.0],
           "ShineColorIR": [0.35, 0.95, 0.1],
           "ItemExclusionList": [
             "Arrow", "MMPArrowBodkin", "MMPArrowSilver", "MMPArrowBlunt",

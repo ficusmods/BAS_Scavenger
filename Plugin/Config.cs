@@ -20,7 +20,7 @@ namespace Scavenger
         public static float ItemDropRaycastSphereSize = 0.2f;
         public static float ItemDropRaycastLength = 3.0f;
         public static HashSet<string> ItemExclusionList = new HashSet<string>();
-        public static float[] ShineColorOOR = new float[3] { 0.95f, 0.35f, 0.1f }; // out of range
+        public static float[] ShineColorOOR = new float[3] { 1.0f, 1.0f, 1.0f }; // out of range
         public static float[] ShineColorIR = new float[3] { 0.35f, 0.95f, 0.1f }; // in range
 
     }
