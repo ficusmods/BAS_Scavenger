@@ -11,8 +11,9 @@
           "$type": "Scavenger.LoadModule, Scavenger",
           "mod_name": "Scavenger",
           "mod_version": "1.0",
-          "logger_level": "Detailed",
+          "logger_level": "Basic",
           "TrackedItemCount": 50,
+          "ItemSpotNoParticles": false,
           "ItemSpotLabelVisibleDistance": 0.6,
           "ItemSpotShineVisibleDistance": 5.0,
           "ItemSpotGrabDistance": 0.5,
@@ -22,7 +23,6 @@
           "ItemDropRaycastSphereSize": 0.2,
           "ItemDropRaycastLength": 3.0,
           "ItemSpotSpawnHeight": 0.1,
-          "ItemSpotNoParticles": false,
           "ShineColorOOR": [1.0, 1.0, 1.0],
           "ShineColorIR": [0.35, 0.95, 0.1],
           "ItemExclusionList": [
