@@ -9,6 +9,7 @@ namespace Scavenger
     public class Config
     {
         public static uint TrackedItemCount = 50;
+        public static bool ItemSpotNoParticles = false;
         public static float ItemSpotSpawnHeight = 0.1f;
         public static float ItemSpotLabelVisibleDistance = 0.6f;
         public static float ItemSpotShineVisibleDistance = 5.0f;

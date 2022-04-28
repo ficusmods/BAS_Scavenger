@@ -19,8 +19,18 @@ namespace Scavenger
 
         private Canvas labelCanvas;
         private Text labelText;
-        private ParticleSystem shineParticleSystem;
-        private ParticleSystemRenderer shineParticleRenderer;
+
+        // Particles version
+        private ParticleSystem shineParticleSystem = null;
+        private ParticleSystemRenderer shineParticleRenderer = null;
+        private ParticleSystem sparkParticleSystem = null;
+        private ParticleSystemRenderer sparkParticleRenderer = null;
+
+        // No particles version
+        private GameObject meshObject = null;
+        private MeshRenderer meshRenderer = null;
+
+        private bool noParticles = false;
 
         bool _grabbable;
         public bool CanGrab
@@ -58,7 +68,7 @@ namespace Scavenger
             return comp;
         }
 
-        public void Spawn()
+        private void SpawnWithParticles()
         {
             Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemSpot",
                 (GameObject obj) =>
@@ -73,16 +83,63 @@ namespace Scavenger
                     labelText.text = itemData.displayName;
                     labelText.transform.localScale = new Vector3(Config.ItemSpotLabelScale, Config.ItemSpotLabelScale, Config.ItemSpotLabelScale);
                     labelText.gameObject.SetActive(false);
-                    
-                    shineParticleSystem = spotObject.GetComponentInChildren<ParticleSystem>();
-                    var mainParticleModule = shineParticleSystem.main;
-                    mainParticleModule.startSizeX = mainParticleModule.startSizeX.constant * Config.ItemSpotShineScale;
-                    mainParticleModule.startSizeY = mainParticleModule.startSizeY.constant * Config.ItemSpotShineScale;
-                    mainParticleModule.startSizeZ = mainParticleModule.startSizeZ.constant * Config.ItemSpotShineScale;
+
+                    GameObject particleSystemRoot = spotObject.transform.Find("ParticleSystem").gameObject;
+                    GameObject shineParticleSystemRoot = particleSystemRoot.transform.Find("ShineParticleSystem").gameObject;
+                    GameObject sparkParticleSystemRoot = particleSystemRoot.transform.Find("SparkParticleSystem").gameObject;
+
+                    shineParticleSystem = shineParticleSystemRoot.GetComponentInChildren<ParticleSystem>();
+                    var mainShineParticleModule = shineParticleSystem.main;
+                    mainShineParticleModule.startSizeX = mainShineParticleModule.startSizeX.constant * Config.ItemSpotShineScale;
+                    mainShineParticleModule.startSizeY = mainShineParticleModule.startSizeY.constant * Config.ItemSpotShineScale;
+                    mainShineParticleModule.startSizeZ = mainShineParticleModule.startSizeZ.constant * Config.ItemSpotShineScale;
                     shineParticleRenderer = shineParticleSystem.GetComponent<ParticleSystemRenderer>();
                     shineParticleSystem.gameObject.SetActive(false);
+
+                    sparkParticleSystem = sparkParticleSystemRoot.GetComponentInChildren<ParticleSystem>();
+                    var mainSparkParticleModule = sparkParticleSystem.main;
+                    mainSparkParticleModule.startSize = mainSparkParticleModule.startSize.constant * Config.ItemSpotShineScale;
+                    sparkParticleRenderer = sparkParticleSystem.GetComponent<ParticleSystemRenderer>();
+                    sparkParticleSystem.gameObject.SetActive(false);
+
                     spawned = true;
-                }, "Label");
+                }, "ItemSpot");
+        }
+        private void SpawnWithNoParticles()
+        {
+            Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemSpotNoParticles",
+                (GameObject obj) =>
+                {
+                    spotObject = obj;
+                    spotObject.transform.SetParent(this.gameObject.transform, false);
+
+                    labelCanvas = spotObject.GetComponentInChildren<Canvas>();
+                    labelCanvas.transform.localPosition = new Vector3(0.0f, Config.ItemSpotLabelHeight, 0.0f);
+
+                    labelText = spotObject.GetComponentInChildren<Text>();
+                    labelText.text = itemData.displayName;
+                    labelText.transform.localScale = new Vector3(Config.ItemSpotLabelScale, Config.ItemSpotLabelScale, Config.ItemSpotLabelScale);
+                    labelText.gameObject.SetActive(false);
+
+                    meshObject = spotObject.transform.Find("ShineMesh").gameObject;
+                    meshRenderer = meshObject.GetComponent<MeshRenderer>();
+                    meshObject.SetActive(false);
+                    spawned = true;
+                }, "ItemSpot");
+        }
+
+        public void Spawn()
+        {
+            if(Config.ItemSpotNoParticles)
+            {
+                noParticles = true;
+                SpawnWithNoParticles();
+            }
+            else
+            {
+                noParticles = false;
+                SpawnWithParticles();
+            }
         }
 
         public void SpawnItem(Action<Item> callback)
@@ -120,13 +177,31 @@ namespace Scavenger
 
             if (dist <= Config.ItemSpotShineVisibleDistance)
             {
-                shineParticleSystem.gameObject.SetActive(true);
-                shineParticleSystem.Play();
+                if (noParticles)
+                {
+                    meshObject.SetActive(true);
+                }
+                else
+                {
+                    shineParticleSystem.gameObject.SetActive(true);
+                    sparkParticleSystem.gameObject.SetActive(true);
+                    shineParticleSystem.Play();
+                    sparkParticleSystem.Play();
+                }
             }
             else
             {
-                shineParticleSystem.Stop();
-                shineParticleSystem.gameObject.SetActive(false);
+                if (noParticles)
+                {
+                    meshObject.SetActive(false);
+                }
+                else
+                {
+                    shineParticleSystem.Stop();
+                    sparkParticleSystem.Stop();
+                    shineParticleSystem.gameObject.SetActive(false);
+                    sparkParticleSystem.gameObject.SetActive(false);
+                }
             }
 
             if (dist <= Config.ItemSpotGrabDistance)
@@ -134,14 +209,32 @@ namespace Scavenger
                 if (!_grabbable) changeFlag = true;
                 _grabbable = true;
                 labelText.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
-                shineParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+
+                if(noParticles)
+                {
+                    meshRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                }
+                else
+                {
+                    shineParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                    sparkParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                }
             }
             else
             {
                 if (_grabbable) changeFlag = true;
                 _grabbable = false;
                 labelText.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
-                shineParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+
+                if (noParticles)
+                {
+                    meshRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                }
+                else
+                {
+                    shineParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                    sparkParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                }
             }
 
             if (changeFlag)
