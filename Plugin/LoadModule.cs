@@ -25,52 +25,52 @@ namespace Scavenger
         public int TrackedItemCount
         {
             get => Config.TrackedItemCount;
-            set => Config.TrackedItemCount = value;
+            set => Config.TrackedItemCount = value >= 0 ? value : 0;
         }
         public float ItemSpotSpawnHeight
         {
             get => Config.ItemSpotSpawnHeight;
-            set => Config.ItemSpotSpawnHeight = value;
+            set => Config.ItemSpotSpawnHeight = value >= 0 ? value : 0;
         }
         public float ItemSpotLabelVisibleDistance
         {
             get => Config.ItemSpotLabelVisibleDistance;
-            set => Config.ItemSpotLabelVisibleDistance = value;
+            set => Config.ItemSpotLabelVisibleDistance = value >= 0 ? value : 0;
         }
         public float ItemSpotShineVisibleDistance
         {
             get => Config.ItemSpotShineVisibleDistance;
-            set => Config.ItemSpotShineVisibleDistance = value;
+            set => Config.ItemSpotShineVisibleDistance = value >= 0 ? value : 0;
         }
         public float ItemSpotGrabDistance
         {
             get => Config.ItemSpotGrabDistance;
-            set => Config.ItemSpotGrabDistance = value;
+            set => Config.ItemSpotGrabDistance = value >= 0 ? value : 0;
         }
         public float ItemSpotShineScale
         {
             get => Config.ItemSpotShineScale;
-            set => Config.ItemSpotShineScale = value;
+            set => Config.ItemSpotShineScale = value >= 0 ? value : 0;
         }
         public float ItemSpotLabelScale
         {
             get => Config.ItemSpotLabelScale;
-            set => Config.ItemSpotLabelScale = value;
+            set => Config.ItemSpotLabelScale = value >= 0 ? value : 0;
         }
         public float ItemSpotLabelHeight
         {
             get => Config.ItemSpotLabelHeight;
-            set => Config.ItemSpotLabelHeight = value;
+            set => Config.ItemSpotLabelHeight = value >= 0 ? value : 0;
         }
         public float ItemDropRaycastSphereSize
         {
             get => Config.ItemDropRaycastSphereSize;
-            set => Config.ItemDropRaycastSphereSize = value;
+            set => Config.ItemDropRaycastSphereSize = value >= 0 ? value : 0;
         }
         public float ItemDropRaycastLength
         {
             get => Config.ItemDropRaycastLength;
-            set => Config.ItemDropRaycastLength = value;
+            set => Config.ItemDropRaycastLength = value >= 0 ? value : 0;
         }
 
         public IList<String> ItemExclusionList;
