@@ -32,10 +32,10 @@ namespace Scavenger
 
         private bool noParticles = false;
 
-        bool _grabbable;
+        bool canGrab;
         public bool CanGrab
         {
-            get => _grabbable;
+            get => canGrab;
         }
 
         public delegate void ItemSpotGrabStatusChange(ItemSpot spot, bool grabbable);
@@ -156,20 +156,9 @@ namespace Scavenger
             }
         }
 
-        private void Update()
+        private void UpdateLabelVisibility(float playerDist)
         {
-            if (!spawned) return;
-            if (!Player.local || !Player.local.creature) return;
-
-            PlayerHand leftHand = Player.local.handLeft;
-            PlayerHand rightHand = Player.local.handRight;
-            float leftDist = Vector3.Distance(leftHand.transform.position, gameObject.transform.position);
-            float rightDist = Vector3.Distance(rightHand.transform.position, gameObject.transform.position);
-            float dist = Math.Min(leftDist, rightDist);
-
-            bool changeFlag = true;
-
-            if (dist <= Config.ItemSpotLabelVisibleDistance)
+            if (playerDist <= Config.ItemSpotLabelVisibleDistance)
             {
                 labelText.gameObject.SetActive(true);
                 labelText.transform.LookAt(Camera.main.transform.position);
@@ -179,8 +168,11 @@ namespace Scavenger
             {
                 labelText.gameObject.SetActive(false);
             }
+        }
 
-            if (dist <= Config.ItemSpotShineVisibleDistance)
+        private void UpdateShineVisibility(float playerDist)
+        {
+            if (playerDist <= Config.ItemSpotShineVisibleDistance)
             {
                 if (noParticles)
                 {
@@ -208,45 +200,73 @@ namespace Scavenger
                     sparkParticleSystem.gameObject.SetActive(false);
                 }
             }
+        }
 
-            if (dist <= Config.ItemSpotGrabDistance)
+        private bool UpdateGrabStatus(float playerDist)
+        {
+            bool changeFlag = false;
+
+            if (playerDist <= Config.ItemSpotGrabDistance)
             {
-                if (!_grabbable) changeFlag = true;
-                _grabbable = true;
-                labelText.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                if (!canGrab)
+                {
+                    changeFlag = true;
+                    canGrab = true;
+                    labelText.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
 
-                if(noParticles)
-                {
-                    meshRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
-                }
-                else
-                {
-                    shineParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
-                    sparkParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                    if (noParticles)
+                    {
+                        meshRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                    }
+                    else
+                    {
+                        shineParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                        sparkParticleRenderer.material.color = new Color(Config.ShineColorIR[0], Config.ShineColorIR[1], Config.ShineColorIR[2]);
+                    }
                 }
             }
             else
             {
-                if (_grabbable) changeFlag = true;
-                _grabbable = false;
-                labelText.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                if (canGrab)
+                {
+                    changeFlag = true;
+                    canGrab = false;
+                    labelText.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
 
-                if (noParticles)
-                {
-                    meshRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
-                }
-                else
-                {
-                    shineParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
-                    sparkParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                    if (noParticles)
+                    {
+                        meshRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                    }
+                    else
+                    {
+                        shineParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                        sparkParticleRenderer.material.color = new Color(Config.ShineColorOOR[0], Config.ShineColorOOR[1], Config.ShineColorOOR[2]);
+                    }
                 }
             }
 
+            return changeFlag;
+        }
+
+        private void Update()
+        {
+            if (!spawned) return;
+            if (!Player.local || !Player.local.creature) return;
+
+            PlayerHand leftHand = Player.local.handLeft;
+            PlayerHand rightHand = Player.local.handRight;
+            float leftDist = Vector3.Distance(leftHand.transform.position, gameObject.transform.position);
+            float rightDist = Vector3.Distance(rightHand.transform.position, gameObject.transform.position);
+            float dist = Math.Min(leftDist, rightDist);
+
+            UpdateLabelVisibility(dist);
+            UpdateShineVisibility(dist);
+            bool changeFlag = UpdateGrabStatus(dist);
             if (changeFlag)
             {
                 if (onItemSpotGrabStatusChange != null)
                 {
-                    onItemSpotGrabStatusChange(this, _grabbable);
+                    onItemSpotGrabStatusChange(this, canGrab);
                 }
             }
         }
