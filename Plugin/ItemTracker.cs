@@ -67,7 +67,7 @@ namespace Scavenger
 
             foreach (Item item in Item.allActive)
             {
-                if (!NonTrackedItemTypes.Contains(item.data.type))
+                if (!NonTrackedItemTypes.Contains(item.data.type) && !Config.ItemExclusionList.Contains(item.data.id))
                 {
                     ItemTrackingModule trackingModule = item.gameObject.GetComponent<ItemTrackingModule>();
                     if (trackingModule == null)
@@ -125,7 +125,7 @@ namespace Scavenger
 
             foreach (Item item in Item.allActive)
             {
-                if (!NonTrackedItemTypes.Contains(item.data.type))
+                if (!NonTrackedItemTypes.Contains(item.data.type) && !Config.ItemExclusionList.Contains(item.data.id))
                 {
                     ItemTrackingModule trackingModule;
                     if (Level.current.gameObject.TryGetComponent<ItemTrackingModule>(out trackingModule))

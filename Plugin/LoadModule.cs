@@ -67,22 +67,19 @@ namespace Scavenger
             get => Config.ItemDropRaycastLength;
             set => Config.ItemDropRaycastLength = value;
         }
-        public float[] ShineColorOOR
-        {
-            get => Config.ShineColorOOR;
-            set => Config.ShineColorOOR = value;
-        }
-        public float[] ShineColorIR
-        {
-            get => Config.ShineColorIR;
-            set => Config.ShineColorIR = value;
-        }
+
+        public IList<String> ItemExclusionList;
+        public float[] ShineColorOOR;
+        public float[] ShineColorIR;
 
         public override IEnumerator OnLoadCoroutine()
         {
             Logger.init(mod_name, mod_version, logger_level);
 
             Logger.Basic("Loading " + mod_name);
+            Config.ItemExclusionList = ItemExclusionList.ToHashSet();
+            Config.ShineColorOOR[0] = ShineColorOOR[0]; Config.ShineColorOOR[1] = ShineColorOOR[1]; Config.ShineColorOOR[2] = ShineColorOOR[2];
+            Config.ShineColorIR[0] = ShineColorIR[0]; Config.ShineColorIR[1] = ShineColorIR[1]; Config.ShineColorIR[2] = ShineColorIR[2];
             EventManager.onLevelLoad += EventManager_onLevelLoad;
             return base.OnLoadCoroutine();
         }
