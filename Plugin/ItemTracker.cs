@@ -108,6 +108,7 @@ namespace Scavenger
                 };
 
                 Logger.Detailed("Created item spot: {0} ({1}, {2})", ispot.spotName, ispot.itemData.id, ispot.GetInstanceID());
+                itemSpots.Add(ispot);
                 spotSpawnOrder.AddLast(ispot);
             }
         }
