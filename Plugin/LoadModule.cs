@@ -17,7 +17,12 @@ namespace Scavenger
         public string mod_name = "UnnamedMod";
         public string logger_level = "Basic";
 
-        public uint TrackedItemCount
+        public bool ItemSpotNoParticles
+        {
+            get => Config.ItemSpotNoParticles;
+            set => Config.ItemSpotNoParticles = value;
+        }
+        public int TrackedItemCount
         {
             get => Config.TrackedItemCount;
             set => Config.TrackedItemCount = value;
