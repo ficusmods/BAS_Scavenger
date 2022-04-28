@@ -49,7 +49,12 @@ namespace Scavenger
             ItemSpot comp = null;
 
             RaycastHit rcHit;
-            if (Physics.SphereCast(new Ray(position + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down), Config.ItemDropRaycastSphereSize, out rcHit, Config.ItemDropRaycastLength + 1.0f, GameManager.local.groundLayer, QueryTriggerInteraction.Ignore))
+            if (Physics.SphereCast(
+                new Ray(position + new Vector3(0.0f, 0.1f + Config.ItemDropRaycastSphereSize, 0.0f), Vector3.down),
+                Config.ItemDropRaycastSphereSize,
+                out rcHit,
+                Config.ItemDropRaycastLength + 0.1f + Config.ItemDropRaycastSphereSize,
+                GameManager.local.groundLayer, QueryTriggerInteraction.Ignore))
             {
                 GameObject itemSpot = new GameObject(name);
                 itemSpot.transform.position = rcHit.point;
