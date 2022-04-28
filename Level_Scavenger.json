@@ -9,20 +9,27 @@
 	  [
         {
           "$type": "Scavenger.LoadModule, Scavenger",
-          "mod_name": "Scavenge",
+          "mod_name": "Scavenger",
           "mod_version": "1.0",
           "logger_level": "Detailed",
           "TrackedItemCount": 50,
           "ItemSpotLabelVisibleDistance": 0.6,
           "ItemSpotShineVisibleDistance": 5.0,
           "ItemSpotGrabDistance": 0.5,
-          "ItemSpotLabelScale": 0.0005,
+          "ItemSpotShineScale": 1.0,
+          "ItemSpotLabelScale": 1.0,
           "ItemSpotLabelHeight": 0.3,
           "ItemDropRaycastSphereSize": 0.2,
           "ItemDropRaycastLength": 3.0,
           "ItemSpotSpawnHeight": 0.1,
+          "ItemSpotNoParticles": false,
           "ShineColorOOR": [0.95, 0.35, 0.1],
-          "ShineColorIR": [0.35, 0.95, 0.1]
+          "ShineColorIR": [0.35, 0.95, 0.1],
+          "ItemExclusionList": [
+            "Arrow", "MMPArrowBodkin", "MMPArrowSilver", "MMPArrowBlunt",
+            "MMPArrowCut", "MMPDaggerD", "MMPBattleAxeD", "MMPDart",
+            "MMPArrowSword", "MMPStone"
+          ]
         }
       ]
     }
