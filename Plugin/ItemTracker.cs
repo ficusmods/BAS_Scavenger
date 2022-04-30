@@ -48,7 +48,8 @@ namespace Scavenger
             // Need to iterate since the oldest one might have already been removed
             while (!flag)
             {
-                ItemSpot currLatestSpot = spotSpawnOrder.First();
+                if (spotSpawnOrder.First == null) break;
+                ItemSpot currLatestSpot = spotSpawnOrder.First.Value;
                 if (itemSpots.Contains(currLatestSpot))
                 {
                     flag = true;
@@ -64,6 +65,11 @@ namespace Scavenger
         {
             if (GameManager.isQuitting) trackingEnabled = false;
             if (!trackingEnabled) return;
+
+            while (this.itemSpots.Count > Config.TrackedItemCount)
+            {
+                RemoveOldestItemSpot();
+            }
 
             foreach (Item item in Item.allActive)
             {
@@ -83,11 +89,7 @@ namespace Scavenger
         private void TrackingModule_onItemDeactivated(Item item)
         {
             if (!trackingEnabled) return;
-
-            if (this.itemSpots.Count >= Config.TrackedItemCount)
-            {
-                RemoveOldestItemSpot();
-            }
+            if (Config.TrackedItemCount == 0) return;
 
             Logger.Detailed("Trying to create item spot at: ({0},{1},{2}) ({3})", item.transform.position.x, item.transform.position.y, item.transform.position.z, item.data.id);
             ItemSpot ispot = ItemSpot.TryCreate(item.transform.position, item.data);
