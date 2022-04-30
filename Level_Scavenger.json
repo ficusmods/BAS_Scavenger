@@ -10,7 +10,7 @@
         {
           "$type": "Scavenger.LoadModule, Scavenger",
           "mod_name": "Scavenger",
-          "mod_version": "1.0",
+          "mod_version": "1.1",
           "logger_level": "Basic",
           "TrackedItemCount": 50,
           "ItemSpotNoParticles": false,
