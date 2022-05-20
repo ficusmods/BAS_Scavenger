@@ -75,7 +75,7 @@ namespace Scavenger
 
         private void SpawnWithParticles()
         {
-            Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemSpot",
+            Catalog.InstantiateAsync("fks.scavenger.ItemSpot", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
                 (GameObject obj) =>
                 {
                     spotObject = obj;
@@ -112,7 +112,7 @@ namespace Scavenger
         }
         private void SpawnWithNoParticles()
         {
-            Catalog.InstantiateAsync<GameObject>("fks.scavenger.ItemSpotNoParticles",
+            Catalog.InstantiateAsync("fks.scavenger.ItemSpotNoParticles", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
                 (GameObject obj) =>
                 {
                     spotObject = obj;
