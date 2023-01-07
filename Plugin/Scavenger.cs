@@ -49,9 +49,16 @@ namespace Scavenger
                     Logger.Detailed("Spawning item at spot: {0} ({1}, {2})", activeItemSpot.spotName, activeItemSpot.itemData.id, activeItemSpot.GetInstanceID());
                     activeItemSpot.SpawnItem(item =>
                     {
-                        Physics.IgnoreCollision(playerHand.ragdollHand.touchCollider, item.GetMainHandle(side).touchCollider, true);
-                        item.transform.MoveAlign(item.GetDefaultHolderPoint().anchor, playerHand.ragdollHand.transform);
-                        playerHand.ragdollHand.Grab(item.GetMainHandle(side));
+                        if (item != null)
+                        {
+                            Physics.IgnoreCollision(playerHand.ragdollHand.touchCollider, item.GetMainHandle(side).touchCollider, true);
+                            item.transform.MoveAlign(item.GetDefaultHolderPoint().anchor, playerHand.ragdollHand.transform);
+                            Handle handle = item.GetMainHandle(side);
+                            if (handle != null)
+                            {
+                                playerHand.ragdollHand.Grab(handle);
+                            }
+                        }
                     });
                     playerHand.ragdollHand.caster.telekinesis.TryRelease();
                 }
@@ -60,7 +67,7 @@ namespace Scavenger
             lastFrameGrabbing[side] = playerHand.controlHand.gripPressed;
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             if (!Player.local || !Player.local.creature) return;
             UpdateHand(Side.Left);

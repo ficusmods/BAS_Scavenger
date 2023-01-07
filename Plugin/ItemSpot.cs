@@ -75,7 +75,7 @@ namespace Scavenger
 
         private void SpawnWithParticles()
         {
-            Catalog.InstantiateAsync("fks.scavenger.ItemSpot", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
+            Catalog.InstantiateAsync("ficus.scavenger.ItemSpot", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
                 (GameObject obj) =>
                 {
                     spotObject = obj;
@@ -112,7 +112,7 @@ namespace Scavenger
         }
         private void SpawnWithNoParticles()
         {
-            Catalog.InstantiateAsync("fks.scavenger.ItemSpotNoParticles", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
+            Catalog.InstantiateAsync("ficus.scavenger.ItemSpotNoParticles", gameObject.transform.position, gameObject.transform.rotation, gameObject.transform,
                 (GameObject obj) =>
                 {
                     spotObject = obj;
@@ -248,10 +248,11 @@ namespace Scavenger
             return changeFlag;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (!spawned) return;
             if (!Player.local || !Player.local.creature) return;
+            if (GameManager.isQuitting) return;
 
             PlayerHand leftHand = Player.local.handLeft;
             PlayerHand rightHand = Player.local.handRight;

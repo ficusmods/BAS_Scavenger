@@ -7,16 +7,20 @@ using System.Linq;
 using UnityEngine;
 using ThunderRoad;
 
+using System.Text.RegularExpressions;
 
 namespace Scavenger
 {
     public class ItemTracker : MonoBehaviour
     {
-        private HashSet<ItemSpot> itemSpots = new HashSet<ItemSpot>();
-        private LinkedList<ItemSpot> spotSpawnOrder = new LinkedList<ItemSpot>();
-        private HashSet<ItemSpot> grabbableItemSpots = new HashSet<ItemSpot>();
+        private HashSet<ItemSpot> itemSpots;
+        private LinkedList<ItemSpot> spotSpawnOrder;
+        private HashSet<ItemSpot> grabbableItemSpots;
 
-        HashSet<ItemData.Type> NonTrackedItemTypes = new HashSet<ItemData.Type> { ItemData.Type.Prop, ItemData.Type.Body, ItemData.Type.Wardrobe, ItemData.Type.Spell, ItemData.Type.Misc };
+        private HashSet<ItemData.Type> NonTrackedItemTypes;
+        private HashSet<Item> trackedItems;
+        private HashSet<string> knownToIgnore;
+        private HashSet<string> knownToUse;
 
         bool trackingEnabled = false;
 
@@ -33,8 +37,16 @@ namespace Scavenger
 
         private void Awake()
         {
+            EventManager.onLevelLoad += EventManager_onLevelLoad;
             EventManager.onLevelUnload += EventManager_onLevelUnload;
             trackingEnabled = true;
+            NonTrackedItemTypes = new HashSet<ItemData.Type> { ItemData.Type.Prop, ItemData.Type.Body, ItemData.Type.Wardrobe, ItemData.Type.Spell, ItemData.Type.Misc };
+            itemSpots = new HashSet<ItemSpot>();
+            spotSpawnOrder = new LinkedList<ItemSpot>();
+            grabbableItemSpots = new HashSet<ItemSpot>();
+            trackedItems = new HashSet<Item>();
+            knownToIgnore = new HashSet<string>();
+            knownToUse = new HashSet<string>();
         }
 
         private void EventManager_onLevelUnload(LevelData levelData, EventTime eventTime)
@@ -42,28 +54,85 @@ namespace Scavenger
             if (eventTime == EventTime.OnStart) trackingEnabled = false;
         }
 
+        private void EventManager_onLevelLoad(LevelData levelData, EventTime eventTime)
+        {
+            if (eventTime == EventTime.OnStart) trackingEnabled = false;
+            else trackingEnabled = true;
+        }
+
         private void RemoveOldestItemSpot()
         {
-            bool flag = false;
             // Need to iterate since the oldest one might have already been removed
-            while (!flag)
+            while (true)
             {
                 if (spotSpawnOrder.First == null) break;
                 ItemSpot currLatestSpot = spotSpawnOrder.First.Value;
                 if (itemSpots.Contains(currLatestSpot))
                 {
-                    flag = true;
+                    spotSpawnOrder.RemoveFirst();
                     itemSpots.Remove(currLatestSpot);
                     grabbableItemSpots.Remove(currLatestSpot);
                     GameObject.Destroy(currLatestSpot.gameObject);
+                    break;
                 }
-                spotSpawnOrder.RemoveFirst();
+                else
+                {
+                    spotSpawnOrder.RemoveFirst();
+                }
             }
         }
 
-        private void Update()
+        private void AddToUsed(string id)
+        {
+            Logger.Detailed("{0} added to used ids", id);
+            knownToUse.Add(id);
+        }
+
+        private void AddToIgnored(string id)
+        {
+            Logger.Detailed("{0} added to ignored ids", id);
+            knownToIgnore.Add(id);
+        }
+
+        private bool ItemIncludeTest(Item item)
+        {
+            if (knownToUse.Contains(item.data.id)) return true;
+            else if (knownToIgnore.Contains(item.data.id)) return false;
+
+            if (NonTrackedItemTypes.Contains(item.data.type))
+            {
+                AddToIgnored(item.data.id);
+                return false;
+            }
+
+            if (Config.ItemExclusionListUseRegex)
+            {
+                foreach (Regex rx in Config.ItemExclusionListRegex)
+                {
+                    if (rx.Match(item.data.id).Success)
+                    {
+                        AddToIgnored(item.data.id);
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (Config.ItemExclusionList.Contains(item.data.id))
+                {
+                    AddToIgnored(item.data.id);
+                    return false;
+                }
+            }
+
+            AddToUsed(item.data.id);
+            return true;
+        }
+
+        private void FixedUpdate()
         {
             if (GameManager.isQuitting) trackingEnabled = false;
+
             if (!trackingEnabled) return;
 
             while (this.itemSpots.Count > Config.TrackedItemCount)
@@ -73,21 +142,24 @@ namespace Scavenger
 
             foreach (Item item in Item.allActive)
             {
-                if (!NonTrackedItemTypes.Contains(item.data.type) && !Config.ItemExclusionList.Contains(item.data.id))
+                if (item.data == null) continue;
+
+                if (ItemIncludeTest(item) && !trackedItems.Contains(item))
                 {
                     ItemTrackingModule trackingModule = item.gameObject.GetComponent<ItemTrackingModule>();
                     if (trackingModule == null)
                     {
                         trackingModule = item.gameObject.AddComponent<ItemTrackingModule>();
+                        trackingModule.onItemDeactivated += TrackingModule_onItemDeactivated;
                     }
-                    trackingModule.onItemDeactivated -= TrackingModule_onItemDeactivated;
-                    trackingModule.onItemDeactivated += TrackingModule_onItemDeactivated;
+                    trackedItems.Add(item);
                 }
             }
         }
 
         private void TrackingModule_onItemDeactivated(Item item)
         {
+            trackedItems.Remove(item);
             if (!trackingEnabled) return;
             if (Config.TrackedItemCount == 0) return;
 

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using ThunderRoad;
 using UnityEngine;
 
+using System.Text.RegularExpressions;
+
 namespace Scavenger
 {
     public class LoadModule : LevelModule
@@ -73,6 +75,12 @@ namespace Scavenger
             set => Config.ItemDropRaycastLength = value >= 0 ? value : 0;
         }
 
+        public bool ItemExclusionListUseRegex
+        {
+            get => Config.ItemExclusionListUseRegex;
+            set => Config.ItemExclusionListUseRegex = value;
+        }
+
         public IList<String> ItemExclusionList;
         public float[] ShineColorOOR;
         public float[] ShineColorIR;
@@ -82,11 +90,36 @@ namespace Scavenger
             Logger.init(mod_name, mod_version, logger_level);
 
             Logger.Basic("Loading " + mod_name);
-            Config.ItemExclusionList = ItemExclusionList.ToHashSet();
+            CompileItemExclusionList();
             Config.ShineColorOOR[0] = ShineColorOOR[0]; Config.ShineColorOOR[1] = ShineColorOOR[1]; Config.ShineColorOOR[2] = ShineColorOOR[2];
             Config.ShineColorIR[0] = ShineColorIR[0]; Config.ShineColorIR[1] = ShineColorIR[1]; Config.ShineColorIR[2] = ShineColorIR[2];
             EventManager.onLevelLoad += EventManager_onLevelLoad;
             return base.OnLoadCoroutine();
+        }
+
+        private void CompileItemExclusionList()
+        {
+            foreach (String entry in ItemExclusionList)
+            {
+                string trimmed = entry.Trim();
+                if (trimmed.Length < 1) continue;
+                if(Config.ItemExclusionListUseRegex)
+                {
+                    try
+                    {
+                        Regex.Match("", trimmed);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
+                    }
+                    Config.ItemExclusionListRegex.Add(new Regex(trimmed, RegexOptions.Compiled | RegexOptions.IgnoreCase));
+                }
+                else
+                {
+                    Config.ItemExclusionList.Add(entry);
+                }
+            }
         }
 
         private void EventManager_onLevelLoad(LevelData levelData, EventTime eventTime)
