@@ -7,35 +7,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="ThunderRoad">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\ThunderRoad.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="ThunderRoad.Plugins">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\ThunderRoad.Plugins.dll</HintPath>
+    <Reference Include="ScenarioEditor">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\StreamingAssets\Mods\ScenarioEditor\ScenarioEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="ThunderRoad">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\ThunderRoad.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ResourceManager">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\Unity.ResourceManager.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blade &amp; Sorcery\BladeAndSorcery_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 
