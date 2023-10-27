@@ -34,7 +34,7 @@ namespace Scavenger
                 float minDist = float.MaxValue;
                 Vector3 handPos = playerHand.transform.position;
 
-                foreach (ItemSpot itemSpot in itemTracker.GrabbableItemSpots)
+                foreach (ItemSpot itemSpot in ItemSpot.GrabbableItemSpots)
                 {
                     float currDist = Vector3.Distance(itemSpot.transform.position, handPos);
                     if (currDist < minDist)

@@ -15,7 +15,6 @@ namespace Scavenger
     {
         private HashSet<ItemSpot> itemSpots;
         private LinkedList<ItemSpot> spotSpawnOrder;
-        private HashSet<ItemSpot> grabbableItemSpots;
 
         private HashSet<ItemData.Type> NonTrackedItemTypes;
         private HashSet<Item> trackedItems;
@@ -30,11 +29,6 @@ namespace Scavenger
             get => itemSpots;
         }
 
-        public HashSet<ItemSpot> GrabbableItemSpots
-        {
-            get => grabbableItemSpots;
-        }
-
         private void Awake()
         {
             EventManager.onLevelLoad += EventManager_onLevelLoad;
@@ -43,7 +37,6 @@ namespace Scavenger
             NonTrackedItemTypes = new HashSet<ItemData.Type> { ItemData.Type.Prop, ItemData.Type.Body, ItemData.Type.Wardrobe, ItemData.Type.Spell, ItemData.Type.Misc };
             itemSpots = new HashSet<ItemSpot>();
             spotSpawnOrder = new LinkedList<ItemSpot>();
-            grabbableItemSpots = new HashSet<ItemSpot>();
             trackedItems = new HashSet<Item>();
             knownToIgnore = new HashSet<string>();
             knownToUse = new HashSet<string>();
@@ -71,7 +64,6 @@ namespace Scavenger
                 {
                     spotSpawnOrder.RemoveFirst();
                     itemSpots.Remove(currLatestSpot);
-                    grabbableItemSpots.Remove(currLatestSpot);
                     GameObject.Destroy(currLatestSpot.gameObject);
                     break;
                 }
@@ -163,27 +155,21 @@ namespace Scavenger
             if (!trackingEnabled) return;
             if (Config.TrackedItemCount == 0) return;
 
-            Logger.Detailed("Trying to create item spot at: ({0},{1},{2}) ({3})", item.transform.position.x, item.transform.position.y, item.transform.position.z, item.data.id);
-            ItemSpot ispot = ItemSpot.TryCreate(item.transform.position, item.data);
-            if (ispot != null)
+            if (Config.TrackingEnabled)
             {
-                ispot.onItemSpotGrabStatusChange += (ItemSpot spot, bool grabbable) =>
+                Logger.Detailed("Trying to create item spot at: ({0},{1},{2}) ({3})", item.transform.position.x, item.transform.position.y, item.transform.position.z, item.data.id);
+                ItemSpot ispot = ItemSpot.TryCreate(item.transform.position, item.data);
+                if (ispot != null)
                 {
-                    if (grabbable) grabbableItemSpots.Add(spot);
-                    else grabbableItemSpots.Remove(spot);
-                };
+                    ispot.onItemSpotItemSpawned += (Item spawnedItem) =>
+                    {
+                        itemSpots.Remove(ispot);
+                    };
 
-                ispot.onItemSpotItemSpawned += (ItemSpot spot) =>
-                {
-                    grabbableItemSpots.Remove(spot);
-                    itemSpots.Remove(spot);
-                    GameObject.Destroy(spot.gameObject);
-                    Logger.Detailed("Deleted item spot: {0} ({1}, {2})", spot.spotName, spot.itemData.id, spot.GetInstanceID());
-                };
-
-                Logger.Detailed("Created item spot: {0} ({1}, {2})", ispot.spotName, ispot.itemData.id, ispot.GetInstanceID());
-                itemSpots.Add(ispot);
-                spotSpawnOrder.AddLast(ispot);
+                    Logger.Detailed("Created item spot: {0} ({1}, {2})", ispot.spotName, ispot.itemData.id, ispot.GetInstanceID());
+                    itemSpots.Add(ispot);
+                    spotSpawnOrder.AddLast(ispot);
+                }
             }
         }
 
@@ -191,7 +177,6 @@ namespace Scavenger
         {
             Logger.Detailed("ItemTracker unloading...");
             spotSpawnOrder.Clear();
-            grabbableItemSpots.Clear();
             foreach(ItemSpot spot in itemSpots)
             {
                 GameObject.Destroy(spot);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using ThunderRoad;
+using UnityEngine.Windows;
 
 namespace Scavenger
 {
@@ -16,9 +17,17 @@ namespace Scavenger
         public GameObject spotObject;
         public string spotName = "ItemSpot_Unknown";
         public bool spawned = false;
+        
+        public static HashSet<ItemSpot> GrabbableItemSpots
+        {
+            get => grabbableItemSpots;
+        }
+
+        private static HashSet<ItemSpot> grabbableItemSpots = new HashSet<ItemSpot>();
 
         private Canvas labelCanvas;
         private Text labelText;
+
 
         // Particles version
         private ParticleSystem shineParticleSystem = null;
@@ -40,7 +49,7 @@ namespace Scavenger
 
         public delegate void ItemSpotGrabStatusChange(ItemSpot spot, bool grabbable);
         public event ItemSpotGrabStatusChange onItemSpotGrabStatusChange;
-        public delegate void ItemSpotOnItemSpawned(ItemSpot spot);
+        public delegate void ItemSpotOnItemSpawned(Item item);
         public event ItemSpotOnItemSpawned onItemSpotItemSpawned;
 
         public static ItemSpot TryCreate(Vector3 position, ItemData idata)
@@ -54,7 +63,7 @@ namespace Scavenger
                 Config.ItemDropRaycastSphereSize,
                 out rcHit,
                 Config.ItemDropRaycastLength + 0.1f + Config.ItemDropRaycastSphereSize,
-                GameManager.local.groundLayer, QueryTriggerInteraction.Ignore))
+                ThunderRoadSettings.current.groundLayer, QueryTriggerInteraction.Ignore))
             {
                 GameObject itemSpot = new GameObject(name);
                 itemSpot.transform.position = rcHit.point;
@@ -149,11 +158,15 @@ namespace Scavenger
 
         public void SpawnItem(Action<Item> callback)
         {
-            itemData.SpawnAsync(callback);
-            if(onItemSpotItemSpawned != null)
-            {
-                onItemSpotItemSpawned(this);
-            }
+            itemData.SpawnAsync((Item item) => {
+                if (onItemSpotItemSpawned != null)
+                {
+                    onItemSpotItemSpawned(item);
+                }
+                callback(item);
+                Logger.Detailed("Deleted item spot: {0} ({1}, {2})", spotName, itemData.id, GetInstanceID());
+                GameObject.Destroy(gameObject);
+            });
         }
 
         private void UpdateLabelVisibility(float playerDist)
@@ -248,6 +261,11 @@ namespace Scavenger
             return changeFlag;
         }
 
+        private void OnDestroy()
+        {
+            grabbableItemSpots.Remove(this);
+        }
+
         private void FixedUpdate()
         {
             if (!spawned) return;
@@ -265,6 +283,8 @@ namespace Scavenger
             bool changeFlag = UpdateGrabStatus(dist);
             if (changeFlag)
             {
+                if (canGrab) grabbableItemSpots.Add(this);
+                else grabbableItemSpots.Remove(this);
                 if (onItemSpotGrabStatusChange != null)
                 {
                     onItemSpotGrabStatusChange(this, canGrab);
