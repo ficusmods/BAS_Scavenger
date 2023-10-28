@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using ScenarioEditor;
 using ThunderRoad;
+using UnityEngine;
 
 namespace Scavenger.SE
 {
@@ -41,6 +42,11 @@ namespace Scavenger.SE
                 spawnedItem.Despawn();
                 spawnedItem = null;
             }
+
+            if (spawnedItemSpot != null)
+            {
+                GameObject.Destroy(spawnedItemSpot.gameObject);
+            }
         }
 
         protected override NodeState TryStart()
@@ -48,12 +54,13 @@ namespace Scavenger.SE
             if (location == null) return NodeState.FAILURE;
             if (itemData == null) return NodeState.FAILURE;
 
-            var spot = ItemSpot.TryCreate(location.pos, itemData);
-            if (spot != null) {
-                spot.onItemSpotItemSpawned += (Item item) =>
+            spawnedItemSpot = ItemSpot.TryCreate(location.pos, itemData);
+            if (spawnedItemSpot != null) {
+                spawnedItemSpot.onItemSpotItemSpawned += (Item item) =>
                 {
                     Scene.Blackboard.UpdateVariable(bbSpawnedId, item.gameObject);
                     spawnedItem = item;
+                    spawnedItemSpot = null;
                 };
 
                 return NodeState.SUCCESS;
@@ -70,6 +77,7 @@ namespace Scavenger.SE
 
         protected ScenarioEditor.Data.SEDataLocation location;
         protected ItemData itemData;
+        protected ItemSpot spawnedItemSpot;
         protected Item spawnedItem;
     }
 }
