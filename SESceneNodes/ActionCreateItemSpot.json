@@ -1,0 +1,15 @@
+{
+  "$type": "ScenarioEditor.Data.SESceneNodeRegistry, ScenarioEditor",
+  "id": "SceneNodeRegistry",
+  "version": 0,
+  "entries": [
+    {
+      "$type": "ScenarioEditor.Data.SERegistryEntrySceneNode, ScenarioEditor",
+      "id": "ActionCreateItemSpot",
+      "menuPrefabAddress": "ficus.SEMenu.LazyMenu",
+      "menuType": "Scavenger.SE.MenuActionCreateItemSpot, Scavenger",
+      "nodeType": "Scavenger.SE.ActionCreateItemSpot, Scavenger",
+      "description": "Creates an item spot."
+    }
+  ]
+}
