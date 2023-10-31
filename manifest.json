@@ -1,7 +1,8 @@
-﻿{
+{
   "Name": "Scavenger",
   "Description": "Find items on the ground",
   "Author": "ficus",
-  "ModVersion": "1.3",
-  "GameVersion": "0.11.0.0"
+  "ModVersion": "1.4",
+  "GameVersion": "0.12.0.0",
+  "Thumbnail": ""
 }
