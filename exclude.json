@@ -1,0 +1,8 @@
+[
+  "([a-zA-Z_]+)?(Arrow|Casing|Projectile|Bullet|Ammo)([a-zA-Z_]+)?",
+  "MMP([a-zA-Z_]+)D$",
+  "^MMPDart$",
+  "^MMPThrowingKnife$",
+  "^MMPShuriken$",
+  "^MMPKunai$"
+]
